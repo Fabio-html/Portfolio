@@ -1,12 +1,18 @@
+html {
+    height: -webkit-fill-available;
+    height: -moz-available;
+}
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
     align-content: center;
-    height: 100vh;
+    height: 100dvh;
     width: 100vw;
     background-color: #f0f0f0;
     overflow: hidden;
+    /* overflow-y: visible; */
     font-family: "neue-haas-unica", sans-serif;
     font-weight: 400;
     font-size: 9pt;
@@ -19,9 +25,9 @@ body {
     position: fixed;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: 15fr 1fr 16fr;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     justify-items: center;
     align-items: center;
     align-content: center;
@@ -36,7 +42,6 @@ body {
     margin: 0;
     align-self: start;
     grid-row: 2 / 3;
-    transform: translateY(16vh);
     position: absolute;
 }
 
@@ -51,8 +56,7 @@ body {
 .fabio-text {
     grid-column: 3 / 4;
     font-size: 14pt;
-    transform: translateY(0);
-    align-self: center;
+    transform: translateY(-4.5pt);
 }
 
 .projects-text {
@@ -119,32 +123,36 @@ body {
 .projects-hub-items {
     display: flex;
     flex-direction: column;
-    height: auto;
     width: 100vw;
+    height: auto;
     align-self: start;
     opacity: 0;
     text-align: center;
-    pointer-events: none;
+    overflow-y: visible;
+    /* pointer-events: none; */
 }
 
 .section {
-    height: 100vh;
+    height: 100dvh;
     width: 100vw;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow-y: scroll;
+    position: relative;
     z-index: 10;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    flex-shrink: 0;
 }
+
 
 .section video, .section img {
-    height: 90vh;
+    height: 90%;
     width: auto;
+    transform: translateY(-3%);
+    position: absolute;
 }
 
-/* .vinyl {
-    background-color: black;
-} */
 
 @keyframes intro {
     from { opacity: 0; }
@@ -152,24 +160,24 @@ body {
 }
 
 @keyframes moveProjects {
-    from {transform: translate(0, 16vh); }
-    to { transform: translate(-60vw, 16vh); 
+    from {transform: translate(0, 0); }
+    to { transform: translate(-60vw, 0); 
     }
 }
 
 @keyframes moveProjectsReverse {
-    from { transform: translate(-60vw, 16vh); }
-    to { transform: translate(0, 16vh); }
+    from { transform: translate(-60vw, 0); }
+    to { transform: translate(0, 0); }
 }
 
 @keyframes moveAbout {
-    from {transform: translate(0, 16vh); }
-    to { transform: translate(60vw, 16vh); }
+    from {transform: translate(0, 0); }
+    to { transform: translate(60vw, 0); }
 }
 
 @keyframes moveAboutReverse {
-    from { transform: translate(60vw, 16vh); }
-    to { transform: translate(0, 16vh); }
+    from { transform: translate(60vw, 0); }
+    to { transform: translate(0, 0); }
 }
 
 
@@ -185,9 +193,12 @@ body {
 
     .hub {
         grid-template-columns: repeat(3fr, 1fr); /* Reduziere auf 3 Spalten */
-        height: 100vh;
+        height: 100dvh;
         width: 100vw;
+        padding: 0;
+        margin: 0;
         font-size: 8pt;
+        font-weight: 400;
         justify-items: center;
         align-items: center;
         align-content: center;
@@ -221,7 +232,6 @@ body {
     .fabio-text {
         grid-column: 2 / 5;
         grid-row: 2 / 3;
-        transform: translateY(0);
     }
 
     .projects-text {
@@ -236,6 +246,7 @@ body {
         grid-row: 2 / 3;
         justify-self: start;
         padding-left: 0;
+        transform: translateX(-20%);
     }
     
     .about-description {
@@ -261,23 +272,23 @@ body {
     
 
 @keyframes moveProjects {
-    from { transform: translate(0, 16vh); }
-    to { transform: translate(-80vw, 16vh); }
+    from { transform: translate(0, 0); }
+    to { transform: translate(-80vw, 0); }
 }
 
 @keyframes moveProjectsReverse {
-    from { transform: translate(-80vw, 16vh); }
-    to { transform: translate(0, 16vh); }
+    from { transform: translate(-80vw, 0); }
+    to { transform: translate(0, 0); }
 }
 
 @keyframes moveAbout {
-    from {transform: translate(0, 16vh); }
-    to { transform: translate(79.5vw, 16vh); }
+    from {transform: translate(0, 0); }
+    to { transform: translate(79.5vw, 0); }
 }
 
 @keyframes moveAboutReverse {
-    from { transform: translate(79.5vw, 16vh); }
-    to { transform: translate(0, 16vh); }
+    from { transform: translate(79.5vw, 0); }
+    to { transform: translate(0, 0); }
 }
 }
 

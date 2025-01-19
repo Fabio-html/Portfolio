@@ -63,12 +63,15 @@ function setupSection(config) {
         const fadeOutElements = document.querySelectorAll(config.fadeOutElements);
         const fadeInElements = document.querySelectorAll(config.fadeInElements);
         
-        // Video neu starten wenn es der About-Bereich ist
-        if (config.selector === '.about-text') {
+        if (config.selector === '.projects-text') {
+            playAllVideos();
+        } else if (config.selector === '.about-text') {
             const video = document.getElementById('aboutVideo');
             if (video) {
-                video.currentTime = 0; // Setzt Video auf Anfang
-                video.play();          // Startet das Video
+                video.currentTime = 0;
+                video.play().catch(error => {
+                    console.log("Auto-play prevented");
+                });
             }
         }
 
@@ -87,6 +90,23 @@ function setupSection(config) {
 
     return state;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Scroll Handler mit Debounce
 function debounce(func, wait) {
@@ -124,52 +144,64 @@ const handleScroll = debounce(() => {
     });
 }, 100);
 
-// Touch-Events für Smartphones
-document.addEventListener('touchmove', (e) => {
-    const scrollPosition = window.scrollY + window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
+// Setup scroll handlers
+window.addEventListener('scroll', handleScroll);
+
+// Funktion zum Erkennen von mobilen Geräten
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Vereinfachte Scroll-Funktion
+function scrollToSection(direction) {
+    const sections = document.querySelectorAll('.section');
+    const currentIndex = Math.round(window.scrollY / window.innerHeight);
+    const nextIndex = Math.max(0, Math.min(
+        sections.length - 1,
+        currentIndex + direction
+    ));
+
+    window.scrollTo({
+        top: nextIndex * window.innerHeight,
+        behavior: isMobileDevice() ? 'instant' : 'instant'
+    });
+}
+
+// Desktop Wheel Event
+let isThrottled = false;
+document.addEventListener('wheel', (e) => {
+    if (isThrottled) return;
+    isThrottled = true;
     
-    if (Math.abs(scrollPosition - documentHeight) < 10) {
-        setTimeout(() => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'instant'
-            });
-        }, 0);
-    }
-}, { passive: true });
+    e.preventDefault();
+    scrollToSection(e.deltaY > 0 ? 1 : -1);
+    
+    setTimeout(() => isThrottled = false, 600);
+}, { passive: false });
+
+// Mobile Touch Events
+if (isMobileDevice()) {
+    let touchStartY = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        const touchEndY = e.changedTouches[0].clientY;
+        const swipeDistance = touchStartY - touchEndY;
+        
+        if (Math.abs(swipeDistance) > 50) {
+            scrollToSection(swipeDistance > 0 ? 1 : -1);
+        }
+    }, { passive: true });
+}
 
 // Initialisierung
 document.addEventListener('DOMContentLoaded', () => {
-    // Setup sections
+    playAllVideos();
     const projectsState = setupSection(ANIMATION_CONFIG.projects);
     const aboutState = setupSection(ANIMATION_CONFIG.about);
-
-    // Setup scroll handlers
-    window.addEventListener('scroll', handleScroll);
-
-    // Setup wheel event mit Throttle
-    let isThrottled = false;
-    document.addEventListener('wheel', (e) => {
-        if (isThrottled) return;
-        isThrottled = true;
-        setTimeout(() => isThrottled = false, 600);
-
-        e.preventDefault();
-        const sections = document.querySelectorAll('.section');
-        const currentSectionIndex = Math.round(window.scrollY / window.innerHeight);
-        const nextSectionIndex = Math.max(0, 
-            Math.min(
-                sections.length - 1,
-                currentSectionIndex + (e.deltaY > 0 ? 1 : -1)
-            )
-        );
-
-        window.scrollTo({
-            top: nextSectionIndex * window.innerHeight,
-            behavior: 'instant'
-        });
-    }, { passive: false });
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -211,6 +243,33 @@ document.addEventListener("DOMContentLoaded", () => {
         
     }
 });
+
+function playAllVideos() {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+        // Sicherstellen, dass das Video geladen ist
+        if (video.readyState >= 2) {
+            video.currentTime = 0;
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Auto-play prevented");
+                });
+            }
+        } else {
+            // Wenn Video noch nicht geladen, warten und dann abspielen
+            video.addEventListener('loadeddata', () => {
+                video.currentTime = 0;
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Auto-play prevented");
+                    });
+                }
+            });
+        }
+    });
+}
 
 
 
